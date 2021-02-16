@@ -52,7 +52,8 @@ class InputFormComponent extends StatefulWidget {
   /// Sets the border of this component.
   final bool isBorderEnabled;
 
-  /// Sets the outline border of this component.
+  /// Sets the border to [OutlineInputBorder] or [UnderlineInputBorder] of this
+  /// component.
   final bool isOutlineBorder;
 
   /// The enabled border color of this component.
@@ -149,8 +150,8 @@ class InputFormComponent extends StatefulWidget {
     this.borderRadius = 0,
     this.isIconVisible = true,
     this.icon = FontAwesomeIcons.icons,
-    this.prefixIconColor = Colors.black,
-    this.suffixIconColor = Colors.black,
+    this.prefixIconColor = Colors.white,
+    this.suffixIconColor = Colors.white,
     this.iconSize,
     this.isObscureText = false,
     this.fontSize = 24,
