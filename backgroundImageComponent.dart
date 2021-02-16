@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// Class component for a background image.
 class BackgroundImageComponent extends StatelessWidget {
   /// The background image of this component.
-  final String image;
+  final ImageProvider image;
 
   /// The begin offset alignment of this component, for linear gradient.
   final AlignmentGeometry beginAlignment;
@@ -54,7 +54,7 @@ class BackgroundImageComponent extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(image),
+            image: image,
             fit: imageFit,
             colorFilter: ColorFilter.mode(
               imageColorFilter,
