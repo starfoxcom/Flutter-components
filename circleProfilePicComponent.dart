@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'iconButtonComponent.dart';
 import 'dart:io';
 
 /// Class component for a circular profile picture
@@ -51,6 +52,14 @@ class CircleProfilePicComponent extends StatefulWidget {
   /// Sets the edit button visible of this component.
   final bool isEditable;
 
+  /// The shape of this component.
+  final BoxShape boxShape;
+
+  /// The edit button border radius (circular) of this component.
+  ///
+  /// Ignored in case that [boxShape] is not a rectangle.
+  final double editBorderRadius;
+
   /// The background color of the edit button of this component.
   final Color editBackgroundColor;
 
@@ -76,10 +85,12 @@ class CircleProfilePicComponent extends StatefulWidget {
     this.backgroundColor = Colors.white,
     this.profilePicRadius = 50,
     this.isNetworkImage = true,
-    this.networkImageURL,
+    @required this.networkImageURL,
     this.profilePicIcon = FontAwesomeIcons.user,
     this.iconColor = Colors.black,
     this.isEditable = false,
+    this.boxShape = BoxShape.circle,
+    this.editBorderRadius = 0,
     this.editBackgroundColor = Colors.white,
     this.editBorderColor = Colors.black,
     this.editBorderWidth = 1,
@@ -191,25 +202,20 @@ class _CircleProfilePicComponentState extends State<CircleProfilePicComponent> {
                 left: (widget.horizontalPadding != null)
                     ? widget.horizontalPadding
                     : widget.leftPadding,
-                child: GestureDetector(
-                  onTap: () {
+                child: IconButtonComponent(
+                  onTapCallback: () {
                     _showPicker(context);
                   },
-                  child: Container(
-                    height: widget.profilePicRadius * 0.7,
-                    width: widget.profilePicRadius * 0.7,
-                    decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: widget.editBackgroundColor,
-                        border: Border.all(
-                            color: widget.editBorderColor,
-                            width: widget.editBorderWidth)),
-                    child: Icon(
-                      widget.editIcon,
-                      color: widget.editIconColor,
-                      size: widget.profilePicRadius * 0.4,
-                    ),
-                  ),
+                  height: widget.profilePicRadius * 0.7,
+                  width: widget.profilePicRadius * 0.7,
+                  boxShape: widget.boxShape,
+                  borderRadius: widget.editBorderRadius,
+                  backgroundColor: widget.editBackgroundColor,
+                  borderColor: widget.editBorderColor,
+                  borderWidth: widget.editBorderWidth,
+                  icon: widget.editIcon,
+                  iconColor: widget.iconColor,
+                  iconSize: widget.profilePicRadius * 0.4,
                 ),
               )
             : Container(
