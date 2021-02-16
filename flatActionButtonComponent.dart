@@ -44,10 +44,19 @@ class FlatActionButtonComponent extends StatelessWidget {
   final Color textColor;
 
   /// The background color of this component.
-  final Color buttonColor;
+  final Color backgroundColor;
+
+  /// The highlight (on pressed) color of this component.
+  final Color highlightColor;
+
+  /// The border color of this component.
+  final Color borderColor;
 
   /// The border radius (circular) of this component.
   final double borderRadius;
+
+  /// The border width of this component.
+  final double borderWidth;
 
   /// Sets the prefix icon visible of this component.
   final bool isPrefixIconVisible;
@@ -83,8 +92,11 @@ class FlatActionButtonComponent extends StatelessWidget {
     this.height,
     this.labelText = "Label text",
     this.textColor = Colors.black,
-    this.buttonColor = Colors.white,
+    this.backgroundColor = Colors.white,
+    this.highlightColor = Colors.black,
+    this.borderColor = Colors.blueAccent,
     this.borderRadius = 0,
+    this.borderWidth = 2,
     this.isPrefixIconVisible = false,
     this.isSuffixIconVisible = false,
     this.prefixIcon = FontAwesomeIcons.icons,
@@ -106,13 +118,18 @@ class FlatActionButtonComponent extends StatelessWidget {
       child: SizedBox(
         width: width,
         height: height,
-        child: TextButton(
-          style: TextButton.styleFrom(
-              primary: textColor,
-              backgroundColor: buttonColor,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(borderRadius)),
-              textStyle: TextStyle()),
+        child: OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            primary: highlightColor,
+            backgroundColor: backgroundColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius),
+            ),
+            side: BorderSide(
+              width: borderWidth,
+              color: borderColor,
+            ),
+          ),
           onPressed: () {
             onPressedCallback();
           },
