@@ -93,7 +93,7 @@ class FlatActionButtonComponent extends StatelessWidget {
     this.labelText = "Label text",
     this.textColor = Colors.black,
     this.backgroundColor = Colors.white,
-    this.highlightColor = Colors.black,
+    this.highlightColor = Colors.grey,
     this.borderColor = Colors.blueAccent,
     this.borderRadius = 0,
     this.borderWidth = 2,
