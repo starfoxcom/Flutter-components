@@ -83,26 +83,38 @@ class InputFormComponent extends StatefulWidget {
   /// The border radius (circular) of this component.
   final double borderRadius;
 
-  /// Sets the icon visible of this component.
-  final bool isIconVisible;
+  /// Sets the prefix icon visible of this component.
+  final bool isPrefixIconVisible;
 
-  /// The icon of this component.
-  final IconData icon;
+  /// The prefix icon of this component.
+  final IconData prefixIcon;
 
   /// The prefix icon color of this component.
   final Color prefixIconColor;
 
+  /// Sets the suffix icon visible of this component (ignored if [isObscureText] is true).
+  final bool isSuffixIconVisible;
+
+  /// The suffix icon of this component (when [isObscureText] is not true).
+  final IconData suffixIcon;
+
   /// The suffix icon color of this component.
   final Color suffixIconColor;
 
-  /// The icon size of this component.
-  final double iconSize;
+  /// The prefix icon size of this component.
+  final double prefixIconSize;
+
+  /// The suffix icon size of this component.
+  final double suffixIconSize;
 
   /// Sets the obscure text of this component.
   final bool isObscureText;
 
   /// The font size of this component.
   final double fontSize;
+
+  /// The error font size of this component.
+  final double errorFontSize;
 
   /// The text color of this component.
   final Color textColor;
@@ -122,6 +134,20 @@ class InputFormComponent extends StatefulWidget {
   /// The [validator] callback function of this component.
   final String Function(String) customValidatorCallback;
 
+  /// The [onChanged] callback function of this component.
+  final void Function(String) onChangedCallback;
+
+  /// The [onEditingComplete] callback function of this component.
+  final void Function() onEditingComplete;
+
+  /// The [onFieldSubmitted] callback function of this component.
+  final void Function(String) onFieldSubmittedCallback;
+
+  /// The max text length of this component.
+  final int maxLength;
+
+  /// The [onPressed] callback function for the suffix icon of this component.
+  final void Function() onSuffixIconPressed;
   const InputFormComponent({
     Key key,
     this.leftPadding = 0,
@@ -148,19 +174,28 @@ class InputFormComponent extends StatefulWidget {
     this.focusedErrorBorderColor = Colors.red,
     this.focusedErrorBorderWidth = 2,
     this.borderRadius = 0,
-    this.isIconVisible = true,
-    this.icon = FontAwesomeIcons.icons,
+    this.isPrefixIconVisible = true,
+    this.prefixIcon = FontAwesomeIcons.icons,
     this.prefixIconColor = Colors.white,
+    this.isSuffixIconVisible = true,
+    this.suffixIcon = FontAwesomeIcons.icons,
     this.suffixIconColor = Colors.white,
-    this.iconSize,
+    this.prefixIconSize = 24,
+    this.suffixIconSize = 24,
     this.isObscureText = false,
     this.fontSize = 24,
+    this.errorFontSize = 18,
     this.textColor = Colors.white,
     this.inputType,
     this.inputAction,
     this.textController,
     this.requireValidation = false,
     this.customValidatorCallback,
+    this.onChangedCallback,
+    this.onEditingComplete,
+    this.onFieldSubmittedCallback,
+    this.onSuffixIconPressed,
+    this.maxLength,
   }) : super(key: key);
   @override
   _InputFormComponentState createState() => _InputFormComponentState();
@@ -170,7 +205,7 @@ class _InputFormComponentState extends State<InputFormComponent> {
   bool obscureText = true;
 
   void dispose() {
-    widget.textController.dispose();
+    widget.textController?.dispose();
     super.dispose();
   }
 
@@ -198,6 +233,7 @@ class _InputFormComponentState extends State<InputFormComponent> {
           child: TextFormField(
             controller: widget.textController,
             decoration: InputDecoration(
+              isDense: true,
               filled: widget.isBackgroundFilled,
               fillColor: widget.backgroundColor,
               enabledBorder: (widget.isBorderEnabled)
@@ -274,11 +310,11 @@ class _InputFormComponentState extends State<InputFormComponent> {
                       borderRadius: BorderRadius.circular(widget.borderRadius)),
               prefixIcon: Padding(
                 padding: EdgeInsets.symmetric(
-                  horizontal: (widget.isIconVisible) ? 20.0 : 0,
+                  horizontal: (widget.isPrefixIconVisible) ? 20.0 : 0,
                 ),
                 child: Icon(
-                  (widget.isIconVisible) ? widget.icon : null,
-                  size: widget.iconSize,
+                  (widget.isPrefixIconVisible) ? widget.prefixIcon : null,
+                  size: widget.prefixIconSize,
                   color: widget.prefixIconColor,
                 ),
               ),
@@ -292,11 +328,36 @@ class _InputFormComponentState extends State<InputFormComponent> {
                             : Icon(FontAwesomeIcons.solidEye,
                                 color: widget.suffixIconColor),
                         onPressed: () {
-                          _toggleObscure();
+                          setState(() {
+                            obscureText = !obscureText;
+                          });
                         },
                       ),
                     )
-                  : null,
+                  : Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: (widget.isSuffixIconVisible) ? 20.0 : 0,
+                      ),
+                      child: (widget.onSuffixIconPressed != null)
+                          ? IconButton(
+                              icon: (widget.isSuffixIconVisible)
+                                  ? Icon(
+                                      widget.suffixIcon,
+                                      color: widget.suffixIconColor,
+                                    )
+                                  : null,
+                              iconSize: widget.suffixIconSize,
+                              onPressed: widget.onSuffixIconPressed,
+                            )
+                          : Icon(
+                              (widget.isSuffixIconVisible)
+                                  ? widget.suffixIcon
+                                  : null,
+                              size: widget.suffixIconSize,
+                              color: widget.suffixIconColor,
+                            ),
+                    ),
+              errorStyle: TextStyle(fontSize: widget.errorFontSize),
               hintText: widget.hintText,
               hintStyle: TextStyle(
                   fontSize: widget.fontSize,
@@ -310,7 +371,7 @@ class _InputFormComponentState extends State<InputFormComponent> {
             validator: (value) {
               if (widget.requireValidation) {
                 if (value.isEmpty) {
-                  return 'Required field';
+                  return 'Campo requerido';
                 }
                 return widget.customValidatorCallback(value);
               }
@@ -323,15 +384,13 @@ class _InputFormComponentState extends State<InputFormComponent> {
                 height: widget.textHeight),
             keyboardType: widget.inputType,
             textInputAction: widget.inputAction,
+            onChanged: widget.onChangedCallback,
+            onEditingComplete: widget.onEditingComplete,
+            onFieldSubmitted: widget.onFieldSubmittedCallback,
+            maxLength: widget.maxLength,
           ),
         ),
       ),
     );
-  }
-
-  void _toggleObscure() {
-    setState(() {
-      obscureText = !obscureText;
-    });
   }
 }
