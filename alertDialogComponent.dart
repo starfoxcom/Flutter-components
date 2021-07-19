@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'flatActionButtonComponent.dart';
@@ -6,7 +8,7 @@ import 'flatActionButtonComponent.dart';
 ///
 /// This component class depends on the [FlatActionButtonComponent], make sure
 /// that you have the component on your project added.
-class AlertDialogComponent extends StatelessWidget {
+class AlertDialogComponent extends StatefulWidget {
   /// The background color of this component.
   final Color backgroundColor;
 
@@ -31,6 +33,15 @@ class AlertDialogComponent extends StatelessWidget {
   /// The horizontal padding (for content width) of this component.
   final double horizontalPadding;
 
+  /// Sets the simple description of this component.
+  ///
+  /// If set to [true], then only a [Text] with a description string will be
+  /// shown, otherwise a [widget] as description is required.
+  final bool isSimpleDescription;
+
+  /// The custom widget description of this component.
+  final Widget customDescription;
+
   /// The description text to display on this component.
   final String descriptionText;
 
@@ -39,6 +50,12 @@ class AlertDialogComponent extends StatelessWidget {
 
   /// The description color of this component.
   final Color descriptionColor;
+
+  /// Sets the single button of this component.
+  ///
+  /// If set to [true], then only [onOkCallback] cannot be null, otherwise
+  /// [onCancelCallback] cannot be null too.
+  final bool isSingleButton;
 
   /// The cancel button width of this component.
   final double cancelButtonWidth;
@@ -79,8 +96,17 @@ class AlertDialogComponent extends StatelessWidget {
   /// The cancel button text to display on this component.
   final String okButtonText;
 
+  /// Sets the timer to activate buttons of this component.
+  ///
+  /// If set to [true], then [timerDuration] cannot be null.
+  final bool isTimerActive;
+
+  /// The duration fo the timer to activate buttons of this component.
+  final int timerDuration;
+
   /// The ok button [onPressedCallback] callback function of this component.
   final void Function() onOkCallback;
+
   const AlertDialogComponent({
     this.backgroundColor = Colors.white,
     this.borderColor = Colors.black,
@@ -90,9 +116,12 @@ class AlertDialogComponent extends StatelessWidget {
     this.titleSize = 20,
     this.titleColor = Colors.black,
     this.horizontalPadding = 0,
+    this.isSimpleDescription = true,
+    this.customDescription,
     this.descriptionText = 'description text',
     this.descriptionSize = 20,
     this.descriptionColor = Colors.black,
+    this.isSingleButton = false,
     this.cancelButtonWidth,
     this.cancelButtonBorderRadius = 0,
     this.cancelButtonBorderColor = Colors.blueAccent,
@@ -107,72 +136,139 @@ class AlertDialogComponent extends StatelessWidget {
     this.okButtonTextColor = Colors.black,
     this.okButtonText = 'Ok',
     @required this.onOkCallback,
+    this.isTimerActive = false,
     Key key,
+    this.timerDuration,
   }) : super(key: key);
 
   @override
+  _AlertDialogComponentState createState() => _AlertDialogComponentState();
+}
+
+class _AlertDialogComponentState extends State<AlertDialogComponent> {
+  /// If buttons are active
+  bool activeButtons = true;
+  int countTime = 0;
+
+  /// Start the countdown to activate buttons
+  void startCountDownTimer() {
+    countTime = 0;
+    if (widget.isTimerActive == true) {
+      activeButtons = false;
+      Timer.periodic(Duration(seconds: 1), (timer) {
+        if (countTime < widget.timerDuration)
+          countTime++;
+        else {
+          activeButtons = true;
+          timer.cancel();
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      backgroundColor: backgroundColor,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: borderColor,
-          width: borderWidth,
-        ),
-        borderRadius: BorderRadius.circular(borderRadius),
-      ),
-      title: Text(
-        titleText,
-        style: TextStyle(
-          fontSize: titleSize,
-          color: titleColor,
-        ),
-      ),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(
-              bottom: 15,
-              left: horizontalPadding,
-              right: horizontalPadding,
-            ),
-            child: Text(
-              descriptionText,
-              style: TextStyle(
-                fontSize: descriptionSize,
-                color: descriptionColor,
-              ),
-            ),
+    startCountDownTimer();
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: AlertDialog(
+        backgroundColor: widget.backgroundColor,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: widget.borderColor,
+            width: widget.borderWidth,
           ),
-          Wrap(
-            spacing: 10,
-            children: [
-              FlatActionButtonComponent(
-                width: cancelButtonWidth,
-                borderRadius: cancelButtonBorderRadius,
-                borderColor: cancelButtonBorderColor,
-                backgroundColor: cancelButtonBackgroundColor,
-                textColor: cancelButtonTextColor,
-                labelText: cancelButtonText,
-                onPressedCallback: () {
-                  onCancelCallback();
+          borderRadius: BorderRadius.circular(widget.borderRadius),
+        ),
+        title: Text(
+          widget.titleText,
+          style: TextStyle(
+            fontSize: widget.titleSize,
+            color: widget.titleColor,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: 15,
+                left: widget.horizontalPadding,
+                right: widget.horizontalPadding,
+              ),
+              child: StatefulBuilder(
+                builder: (context, setState) {
+                  Timer.periodic(Duration(seconds: 1), (timer) {
+                    if (activeButtons) timer.cancel();
+                    if (mounted) setState(() {});
+                  });
+                  return Column(
+                    children: [
+                      widget.isSimpleDescription
+                          ? Text(
+                              widget.descriptionText,
+                              style: TextStyle(
+                                fontSize: widget.descriptionSize,
+                                color: widget.descriptionColor,
+                              ),
+                            )
+                          : widget.customDescription,
+                      if (!activeButtons)
+                        Text(
+                          "Podrá aceptar en ${widget.timerDuration - countTime}",
+                          style: TextStyle(
+                            color: Color(0xFFB5a689),
+                          ),
+                        ),
+                    ],
+                  );
                 },
               ),
-              FlatActionButtonComponent(
-                width: okButtonWidth,
-                borderRadius: okButtonBorderRadius,
-                borderColor: okButtonBorderColor,
-                backgroundColor: okButtonBackgroundColor,
-                textColor: okButtonTextColor,
-                labelText: okButtonText,
-                onPressedCallback: () {
-                  onOkCallback();
-                },
-              ),
-            ],
-          )
-        ],
+            ),
+            (widget.isSingleButton)
+                ? FlatActionButtonComponent(
+                    width: widget.okButtonWidth,
+                    borderRadius: widget.okButtonBorderRadius,
+                    borderColor: widget.okButtonBorderColor,
+                    backgroundColor: widget.okButtonBackgroundColor,
+                    textColor: widget.okButtonTextColor,
+                    labelText: widget.okButtonText,
+                    onPressedCallback: () {
+                      if (activeButtons) widget.onOkCallback();
+                    },
+                    onLongPressedCallback: () {},
+                  )
+                : Wrap(
+                    spacing: 10,
+                    children: [
+                      FlatActionButtonComponent(
+                        width: widget.cancelButtonWidth,
+                        borderRadius: widget.cancelButtonBorderRadius,
+                        borderColor: widget.cancelButtonBorderColor,
+                        backgroundColor: widget.cancelButtonBackgroundColor,
+                        textColor: widget.cancelButtonTextColor,
+                        labelText: widget.cancelButtonText,
+                        onPressedCallback: () {
+                          if (activeButtons) widget.onCancelCallback();
+                        },
+                        onLongPressedCallback: () {},
+                      ),
+                      FlatActionButtonComponent(
+                        width: widget.okButtonWidth,
+                        borderRadius: widget.okButtonBorderRadius,
+                        borderColor: widget.okButtonBorderColor,
+                        backgroundColor: widget.okButtonBackgroundColor,
+                        textColor: widget.okButtonTextColor,
+                        labelText: widget.okButtonText,
+                        onPressedCallback: () {
+                          if (activeButtons) widget.onOkCallback();
+                        },
+                        onLongPressedCallback: () {},
+                      ),
+                    ],
+                  ),
+          ],
+        ),
       ),
     );
   }
