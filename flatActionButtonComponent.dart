@@ -79,6 +79,9 @@ class FlatActionButtonComponent extends StatelessWidget {
   /// The [onPressed] callback function of this component.
   final void Function() onPressedCallback;
 
+  /// The [onLongPressed] callback function of this component.
+  final void Function() onLongPressedCallback;
+
   const FlatActionButtonComponent({
     Key key,
     this.leftPadding = 0,
@@ -104,6 +107,7 @@ class FlatActionButtonComponent extends StatelessWidget {
     this.fontSize = 24,
     this.iconSize = 24,
     @required this.onPressedCallback,
+    @required this.onLongPressedCallback,
   }) : super(key: key);
 
   @override
@@ -132,6 +136,9 @@ class FlatActionButtonComponent extends StatelessWidget {
           ),
           onPressed: () {
             onPressedCallback();
+          },
+          onLongPress: () {
+            onLongPressedCallback();
           },
           child: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
