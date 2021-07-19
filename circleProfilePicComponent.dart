@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'iconButtonComponent.dart';
-import 'dart:io';
+import 'package:universal_io/io.dart';
 
 /// Class component for a circular profile picture
 ///
@@ -105,7 +105,7 @@ class CircleProfilePicComponent extends StatefulWidget {
 
 class _CircleProfilePicComponentState extends State<CircleProfilePicComponent> {
   final ImagePicker _picker = ImagePicker();
-  File _image;
+  dynamic _image;
   void _showPicker(context) {
     showModalBottomSheet(
         context: context,
@@ -144,7 +144,9 @@ class _CircleProfilePicComponentState extends State<CircleProfilePicComponent> {
       setState(() {
         _image = File(image.path);
       });
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future _imgFromGallery() async {
@@ -155,7 +157,9 @@ class _CircleProfilePicComponentState extends State<CircleProfilePicComponent> {
       setState(() {
         _image = File(image.path);
       });
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
