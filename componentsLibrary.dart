@@ -5,3 +5,4 @@ export 'backgroundImageComponent.dart';
 export 'circleProfilePicComponent.dart';
 export 'iconButtonComponent.dart';
 export 'alertDialogComponent.dart';
+export 'screenshotComponent.dart';
