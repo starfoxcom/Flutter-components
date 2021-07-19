@@ -44,25 +44,27 @@ class BackgroundImageComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ShaderMask(
-      shaderCallback: (rect) => LinearGradient(
-        begin: beginAlignment,
-        end: endAlignment,
-        colors: [beginColor, endColor],
-      ).createShader(rect),
-      blendMode: gradientBlendMode,
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: image,
-            fit: imageFit,
-            colorFilter: ColorFilter.mode(
-              imageColorFilter,
-              blendModeImage,
-            ),
+    return
+        // ShaderMask(
+        //   shaderCallback: (rect) => LinearGradient(
+        //     begin: beginAlignment,
+        //     end: endAlignment,
+        //     colors: [beginColor, endColor],
+        //   ).createShader(rect),
+        //   blendMode: gradientBlendMode,
+        //   child:
+        Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: image,
+          fit: imageFit,
+          colorFilter: ColorFilter.mode(
+            imageColorFilter,
+            blendModeImage,
           ),
         ),
       ),
+      // ),
     );
   }
 }
