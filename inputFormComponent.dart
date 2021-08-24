@@ -21,12 +21,12 @@ class InputFormComponent extends StatefulWidget {
   /// The symmetric vertical padding of this component.
   ///
   /// This has priority over the [topPadding] and [bottomPadding] values.
-  final double verticalPadding;
+  final double? verticalPadding;
 
   /// The symmetric horizontal padding of this component.
   ///
   /// This has proprity over the [leftPadding] and [rightPadding] values.
-  final double horizontalPadding;
+  final double? horizontalPadding;
 
   /// The width of this component.
   final double width;
@@ -35,13 +35,13 @@ class InputFormComponent extends StatefulWidget {
   final double height;
 
   /// The text height of this component.
-  final double textHeight;
+  final double? textHeight;
 
   /// The hint text of this component.
-  final String hintText;
+  final String? hintText;
 
   /// The label text of this component.
-  final String labelText;
+  final String? labelText;
 
   /// Sets to apply the background color of this component.
   final bool isBackgroundFilled;
@@ -120,10 +120,10 @@ class InputFormComponent extends StatefulWidget {
   final Color textColor;
 
   /// The input type to optimize the input control of this component.
-  final TextInputType inputType;
+  final TextInputType? inputType;
 
   /// The input action from the input control of this component.
-  final TextInputAction inputAction;
+  final TextInputAction? inputAction;
 
   /// The text editing controller of this component.
   final TextEditingController textController;
@@ -132,24 +132,24 @@ class InputFormComponent extends StatefulWidget {
   final bool requireValidation;
 
   /// The [validator] callback function of this component.
-  final String Function(String) customValidatorCallback;
+  final String Function(String)? customValidatorCallback;
 
   /// The [onChanged] callback function of this component.
-  final void Function(String) onChangedCallback;
+  final void Function(String)? onChangedCallback;
 
   /// The [onEditingComplete] callback function of this component.
-  final void Function() onEditingComplete;
+  final void Function()? onEditingComplete;
 
   /// The [onFieldSubmitted] callback function of this component.
-  final void Function(String) onFieldSubmittedCallback;
+  final void Function(String)? onFieldSubmittedCallback;
 
   /// The max text length of this component.
-  final int maxLength;
+  final int? maxLength;
 
   /// The [onPressed] callback function for the suffix icon of this component.
-  final void Function() onSuffixIconPressed;
+  final void Function()? onSuffixIconPressed;
   const InputFormComponent({
-    Key key,
+    Key? key,
     this.leftPadding = 0,
     this.topPadding = 0,
     this.rightPadding = 0,
@@ -158,7 +158,7 @@ class InputFormComponent extends StatefulWidget {
     this.horizontalPadding,
     this.width = 100,
     this.height = 100,
-    this.textHeight = 1.5,
+    this.textHeight,
     this.hintText,
     this.labelText,
     this.isBackgroundFilled = true,
@@ -188,7 +188,7 @@ class InputFormComponent extends StatefulWidget {
     this.textColor = Colors.white,
     this.inputType,
     this.inputAction,
-    this.textController,
+    required this.textController,
     this.requireValidation = false,
     this.customValidatorCallback,
     this.onChangedCallback,
@@ -205,7 +205,7 @@ class _InputFormComponentState extends State<InputFormComponent> {
   bool obscureText = true;
 
   void dispose() {
-    widget.textController?.dispose();
+    widget.textController.dispose();
     super.dispose();
   }
 
@@ -213,18 +213,10 @@ class _InputFormComponentState extends State<InputFormComponent> {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        left: (widget.horizontalPadding != null)
-            ? widget.horizontalPadding
-            : widget.leftPadding,
-        top: (widget.verticalPadding != null)
-            ? widget.verticalPadding
-            : widget.topPadding,
-        right: (widget.horizontalPadding != null)
-            ? widget.horizontalPadding
-            : widget.rightPadding,
-        bottom: (widget.verticalPadding != null)
-            ? widget.verticalPadding
-            : widget.bottomPadding,
+        left: widget.horizontalPadding ?? widget.leftPadding,
+        top: widget.verticalPadding ?? widget.topPadding,
+        right: widget.horizontalPadding ?? widget.rightPadding,
+        bottom: widget.verticalPadding ?? widget.bottomPadding,
       ),
       child: SizedBox(
         width: widget.width,
@@ -345,7 +337,10 @@ class _InputFormComponentState extends State<InputFormComponent> {
                                       widget.suffixIcon,
                                       color: widget.suffixIconColor,
                                     )
-                                  : null,
+                                  : Container(
+                                      width: 0,
+                                      height: 0,
+                                    ),
                               iconSize: widget.suffixIconSize,
                               onPressed: widget.onSuffixIconPressed,
                             )
@@ -370,10 +365,10 @@ class _InputFormComponentState extends State<InputFormComponent> {
             ),
             validator: (value) {
               if (widget.requireValidation) {
-                if (value.isEmpty) {
+                if (value!.isEmpty) {
                   return 'Campo requerido';
                 }
-                return widget.customValidatorCallback(value);
+                return widget.customValidatorCallback!(value);
               }
               return null;
             },
