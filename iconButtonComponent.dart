@@ -3,8 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Class component for a icon button
 ///
-/// This component class depends of `font_awesome_flutter.dart`, consider adding
-/// it to your dependencies on the `pubspec.yaml` file of the project.
+/// This component class depends of the following package:
+///
+/// * `font_awesome_flutter`
+///
+/// consider adding it to your dependencies on the `pubspec.yaml`
+/// file of the project.
 class IconButtonComponent extends StatelessWidget {
   /// The left padding of this component.
   final double leftPadding;
@@ -21,12 +25,12 @@ class IconButtonComponent extends StatelessWidget {
   /// The symmetric vertical padding of this component.
   ///
   /// This has priority over the [topPadding] and [bottomPadding] values.
-  final double verticalPadding;
+  final double? verticalPadding;
 
   /// The symmetric horizontal padding of this component.
   ///
   /// This has proprity over the [leftPadding] and [rightPadding] values.
-  final double horizontalPadding;
+  final double? horizontalPadding;
 
   /// The [onTap] callback function of this component.
   final void Function() onTapCallback;
@@ -62,14 +66,14 @@ class IconButtonComponent extends StatelessWidget {
   final double iconSize;
 
   const IconButtonComponent({
-    Key key,
+    Key? key,
     this.leftPadding = 0,
     this.topPadding = 0,
     this.rightPadding = 0,
     this.bottomPadding = 0,
     this.verticalPadding,
     this.horizontalPadding,
-    @required this.onTapCallback,
+    required this.onTapCallback,
     this.height = 30,
     this.width = 30,
     this.boxShape = BoxShape.rectangle,
@@ -86,10 +90,10 @@ class IconButtonComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(
-        left: (horizontalPadding != null) ? horizontalPadding : leftPadding,
-        top: (verticalPadding != null) ? verticalPadding : topPadding,
-        right: (horizontalPadding != null) ? horizontalPadding : rightPadding,
-        bottom: (verticalPadding != null) ? verticalPadding : bottomPadding,
+        left: horizontalPadding ?? leftPadding,
+        top: verticalPadding ?? topPadding,
+        right: horizontalPadding ?? rightPadding,
+        bottom: verticalPadding ?? bottomPadding,
       ),
       child: GestureDetector(
         onTap: onTapCallback,

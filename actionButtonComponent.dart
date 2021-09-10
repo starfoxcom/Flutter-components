@@ -3,8 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Class component for a design action button.
 ///
-/// This component class depends of `font_awesome_flutter.dart`, consider adding
-///  it to your dependencies on the `pubspec.yaml` file of the project.
+/// This component class depends of the following package:
+///
+/// * `font_awesome_flutter`
+///
+/// consider adding it to your dependencies on the `pubspec.yaml`
+/// file of the project.
 class ActionButtonComponent extends StatelessWidget {
   /// The left padding of this component.
   final double leftPadding;

@@ -6,8 +6,19 @@ import 'package:universal_io/io.dart';
 
 /// Class component for a circular profile picture
 ///
-/// This component class depends of `font_awesome_flutter.dart`, consider adding
-/// it to your dependencies on the `pubspec.yaml` file of the project.
+/// This component class depends of the following packages:
+///
+/// * `font_awesome_flutter`
+/// * `image_picker`
+/// * `universal_io`
+///
+/// consider adding them to your dependencies on the `pubspec.yaml`
+/// file of the project.
+///
+/// Also, it depends of the following class component:
+/// * `iconButtonComponent`
+///
+/// Consider adding this component to your project.
 class CircleProfilePicComponent extends StatefulWidget {
   /// The left padding of this component.
   final double leftPadding;
@@ -24,12 +35,12 @@ class CircleProfilePicComponent extends StatefulWidget {
   /// The symmetric vertical padding of this component.
   ///
   /// This has priority over the [topPadding] and [bottomPadding] values.
-  final double verticalPadding;
+  final double? verticalPadding;
 
   /// The symmetric horizontal padding of this component.
   ///
   /// This has proprity over the [leftPadding] and [rightPadding] values.
-  final double horizontalPadding;
+  final double? horizontalPadding;
 
   /// The background color of this component.
   final Color backgroundColor;
@@ -75,7 +86,7 @@ class CircleProfilePicComponent extends StatefulWidget {
   /// The icon colof of the edit button of this component.
   final Color editIconColor;
   const CircleProfilePicComponent({
-    Key key,
+    Key? key,
     this.leftPadding = 0,
     this.topPadding = 0,
     this.rightPadding = 0,
@@ -84,8 +95,8 @@ class CircleProfilePicComponent extends StatefulWidget {
     this.horizontalPadding,
     this.backgroundColor = Colors.white,
     this.profilePicRadius = 50,
-    this.isNetworkImage = true,
-    @required this.networkImageURL,
+    this.isNetworkImage = false,
+    this.networkImageURL = '',
     this.profilePicIcon = FontAwesomeIcons.user,
     this.iconColor = Colors.black,
     this.isEditable = false,
@@ -137,12 +148,12 @@ class _CircleProfilePicComponentState extends State<CircleProfilePicComponent> {
   }
 
   Future _imgFromCamera() async {
-    PickedFile image;
+    XFile? image;
     try {
       image =
-          await _picker.getImage(source: ImageSource.camera, imageQuality: 50);
+          await _picker.pickImage(source: ImageSource.camera, imageQuality: 50);
       setState(() {
-        _image = File(image.path);
+        _image = File(image!.path);
       });
     } catch (e) {
       print(e);
@@ -150,12 +161,12 @@ class _CircleProfilePicComponentState extends State<CircleProfilePicComponent> {
   }
 
   Future _imgFromGallery() async {
-    PickedFile image;
+    XFile? image;
     try {
-      image =
-          await _picker.getImage(source: ImageSource.gallery, imageQuality: 50);
+      image = await _picker.pickImage(
+          source: ImageSource.gallery, imageQuality: 50);
       setState(() {
-        _image = File(image.path);
+        _image = File(image!.path);
       });
     } catch (e) {
       print(e);
@@ -168,18 +179,10 @@ class _CircleProfilePicComponentState extends State<CircleProfilePicComponent> {
       children: [
         Padding(
           padding: EdgeInsets.only(
-            left: (widget.horizontalPadding != null)
-                ? widget.horizontalPadding
-                : widget.leftPadding,
-            top: (widget.verticalPadding != null)
-                ? widget.verticalPadding
-                : widget.topPadding,
-            right: (widget.horizontalPadding != null)
-                ? widget.horizontalPadding
-                : widget.rightPadding,
-            bottom: (widget.verticalPadding != null)
-                ? widget.verticalPadding
-                : widget.bottomPadding,
+            left: widget.horizontalPadding ?? widget.leftPadding,
+            top: widget.verticalPadding ?? widget.topPadding,
+            right: widget.horizontalPadding ?? widget.rightPadding,
+            bottom: widget.verticalPadding ?? widget.bottomPadding,
           ),
           child: CircleAvatar(
             backgroundColor: widget.backgroundColor,
@@ -187,7 +190,7 @@ class _CircleProfilePicComponentState extends State<CircleProfilePicComponent> {
             backgroundImage: (widget.isNetworkImage)
                 ? NetworkImage(widget.networkImageURL)
                 : (_image != null)
-                    ? FileImage(_image)
+                    ? FileImage(_image) as ImageProvider
                     : null,
             child: (_image == null && !widget.isNetworkImage)
                 ? Icon(
