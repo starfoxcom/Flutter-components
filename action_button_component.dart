@@ -69,13 +69,15 @@ class ActionButtonComponent extends StatelessWidget {
   /// The border radius (circular) of this component.
   final double borderRadius;
 
-  /// The border radius (circular) [onPressed] of this component.
+  /// The border radius (circular) [onPressed] of this component. If null, the
+  /// normal [borderRadius] is used instead.
   final double? pressedBorderRadius;
 
   /// The border width of this component.
   final double borderWidth;
 
-  /// The border width [onPressed] of this component.
+  /// The border width [onPressed] of this component. If null, the normal
+  /// [borderWidth] is used instead.
   final double? pressedBorderWidth;
 
   /// Sets the prefix icon visible of this component.
